@@ -25,3 +25,11 @@ pnpm-debug.log*
 
 # sst
 .sst
+
+# serena workspace (ignore all of .serena)
+.serena/
+
+# playwright mcp snapshots
+.playwright-mcp/
+
+tmp/
