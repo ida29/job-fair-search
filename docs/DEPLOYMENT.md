@@ -1,12 +1,212 @@
 # デプロイメントガイド
 
-## GitHub Actions + OIDC による AWS へのデプロイ
+このドキュメントでは、GitHub Actions + OIDCを使用したAWSへの安全な継続デプロイについて説明します。
+
+## 目次
+
+1. [デプロイ概要](#デプロイ概要)
+2. [環境構成](#環境構成)
+3. [自動デプロイ](#自動デプロイ)
+4. [手動デプロイ](#手動デプロイ)
+5. [運用ガイド](#運用ガイド)
+6. [トラブルシューティング](#トラブルシューティング)
+
+## デプロイ概要
 
 このプロジェクトは、GitHub Actions と OIDC（OpenID Connect）を使用して、AWS に安全に継続デプロイされます。
 
+### アーキテクチャ
+
+```
+GitHub Actions (OIDC)
+  ↓ 一時的な認証情報
+IAM Role（最小権限）
+  ↓
+SST Deploy
+  ↓
+CloudFront + Lambda@Edge + S3
+```
+
+## 環境構成
+
+| 環境 | トリガー | AWS アカウント | デプロイ先 | 用途 |
+|------|---------|---------------|-----------|------|
+| **dev** | ローカル手動 | dev (861990677232) | https://d22cwy88fjmmi4.cloudfront.net | 開発・検証用 |
+| **stg** | main プッシュ | stg (088206884575) | https://d2027pdceu86hb.cloudfront.net | ステージング環境 |
+| **prod** | v* タグ | prod (390258260748) | https://d3f5ylooslds4t.cloudfront.net | 本番環境 |
+
+## 自動デプロイ
+
+### STG環境（mainブランチ）
+
+mainブランチにプッシュすると、自動的にSTG環境にデプロイされます。
+
+```bash
+# 開発完了後、mainブランチにマージ
+git checkout main
+git pull origin main
+git merge feature/my-feature
+git push origin main
+```
+
+GitHub Actionsが自動的に以下を実行：
+1. コードチェックアウト
+2. 依存関係インストール
+3. OIDC認証でAWS STGアカウントにアクセス
+4. `npx sst deploy --stage stg` を実行
+
+### PROD環境（v*タグ）
+
+バージョンタグを作成してプッシュすると、本番環境にデプロイされます。
+
+```bash
+# バージョンタグを作成
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+GitHub Actionsが自動的にPROD環境にデプロイします。
+
+**バージョニング規則:**
+- `v1.0.0`: メジャーリリース
+- `v1.1.0`: マイナー機能追加
+- `v1.0.1`: パッチ・バグフィックス
+
+### デプロイ状況の確認
+
+```bash
+# GitHub CLIでワークフロー確認
+gh run list --limit 5
+
+# 特定のワークフローを監視
+gh run watch <run-id>
+
+# ログの確認
+gh run view <run-id> --log
+```
+
+## 手動デプロイ
+
+### ローカルからのデプロイ
+
+各環境に手動でデプロイする場合：
+
+```bash
+# Dev環境
+AWS_PROFILE=job-fair-search-dev npx sst deploy --stage dev
+
+# Stg環境
+AWS_PROFILE=job-fair-search-stg npx sst deploy --stage stg
+
+# Prod環境
+AWS_PROFILE=job-fair-search-prod npx sst deploy --stage prod
+```
+
+### デプロイオプション
+
+```bash
+# 詳細ログ付きデプロイ
+npx sst deploy --stage stg --print-logs
+
+# 特定のリソースのみデプロイ
+npx sst deploy --stage stg --target Web
+
+# 確認なしでデプロイ
+npx sst deploy --stage stg --yes
+```
+
+## 運用ガイド
+
+### リソースの確認
+
+```bash
+# デプロイされているリソース一覧
+npx sst console --stage stg
+
+# CloudFormationスタック確認
+aws cloudformation list-stacks \
+  --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE \
+  --profile job-fair-search-stg
+```
+
+### ログの確認
+
+```bash
+# Lambda関数のログ
+aws logs tail /aws/lambda/job-fair-search-stg-WebServerApnortheast1Function \
+  --follow \
+  --profile job-fair-search-stg
+
+# CloudFrontのアクセスログ（S3に保存されている場合）
+aws s3 ls s3://job-fair-search-stg-logs/ --profile job-fair-search-stg
+```
+
+### リソースの削除
+
+**⚠️ 注意**: 本番環境（prod）は保護されており、削除時にretainされます。
+
+```bash
+# Dev環境の削除
+AWS_PROFILE=job-fair-search-dev npx sst remove --stage dev
+
+# Stg環境の削除
+AWS_PROFILE=job-fair-search-stg npx sst remove --stage stg
+
+# Prod環境の削除（リソースは保持される）
+AWS_PROFILE=job-fair-search-prod npx sst remove --stage prod
+```
+
+### ロールバック
+
+問題が発生した場合、以前のタグを再デプロイ：
+
+```bash
+# 前のバージョンに戻す
+git tag -d v1.0.1
+git push origin :v1.0.1
+
+# 正常なバージョンを再デプロイ
+git tag v1.0.0-rollback
+git push origin v1.0.0-rollback
+```
+
+または、CloudFormationスタックを前の状態に戻す：
+
+```bash
+aws cloudformation update-stack \
+  --stack-name <stack-name> \
+  --use-previous-template \
+  --profile job-fair-search-prod
+```
+
+### モニタリング
+
+#### CloudWatch メトリクス
+
+- Lambda関数の実行回数・エラー率
+- CloudFrontのリクエスト数
+- S3のストレージ使用量
+
+```bash
+# Lambda関数のメトリクス確認
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/Lambda \
+  --metric-name Invocations \
+  --dimensions Name=FunctionName,Value=job-fair-search-prod-WebServerApnortheast1Function \
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 300 \
+  --statistics Sum \
+  --profile job-fair-search-prod
+```
+
+## トラブルシューティング
+
 ### セットアップ手順
 
-#### 1. IAM ロールの作成
+初回セットアップについては [SETUP.md](./SETUP.md) を参照してください。
+
+### IAM ロールの作成
 
 CloudFormation テンプレートを使用して、GitHub Actions 用の IAM ロールを作成します。
 
