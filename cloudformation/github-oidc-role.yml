@@ -178,7 +178,9 @@ Resources:
               - ssm:DeleteParameter
               - ssm:AddTagsToResource
               - ssm:RemoveTagsFromResource
-            Resource: !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/sst/${GitHubRepo}/*'
+            Resource:
+              - !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/sst/${GitHubRepo}/*'
+              - !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/sst/bootstrap'
 
           # Additional permissions for SST
           - Sid: AdditionalSST
