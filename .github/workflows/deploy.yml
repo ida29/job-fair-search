@@ -37,9 +37,9 @@ jobs:
             echo "role_arn=${{ secrets.AWS_ROLE_ARN_PROD }}" >> $GITHUB_OUTPUT
             echo "region=${{ secrets.AWS_REGION_PROD }}" >> $GITHUB_OUTPUT
           else
-            echo "stage=dev" >> $GITHUB_OUTPUT
-            echo "role_arn=${{ secrets.AWS_ROLE_ARN_DEV }}" >> $GITHUB_OUTPUT
-            echo "region=${{ secrets.AWS_REGION_DEV }}" >> $GITHUB_OUTPUT
+            echo "stage=stg" >> $GITHUB_OUTPUT
+            echo "role_arn=${{ secrets.AWS_ROLE_ARN_STG }}" >> $GITHUB_OUTPUT
+            echo "region=${{ secrets.AWS_REGION_STG }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Configure AWS credentials (OIDC)
