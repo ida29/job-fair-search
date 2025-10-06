@@ -4,7 +4,7 @@ export default $config({
   app(input) {
     return {
       name: "job-fair-search",
-      removal: input?.stage === "production" ? "retain" : "remove",
+      removal: input?.stage === "prod" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
       home: "aws",
     };
