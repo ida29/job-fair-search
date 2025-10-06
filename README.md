@@ -58,7 +58,7 @@
 
 2. **AWS SSO ログイン**
    ```bash
-   aws sso login --profile job-fair-search-dev
+   npm run sso
    ```
 
 3. **SST開発モード起動**
@@ -134,6 +134,7 @@ export async function GET() {
 
 | コマンド | 説明 |
 |---------|------|
+| `npm run sso` | AWS SSOログイン（dev環境） |
 | `npm run dev` | SST開発モード起動（Astro開発サーバー含む） |
 | `npm run dev:astro` | Astroのみの開発サーバー起動 |
 | `npm run build` | プロダクションビルド |
