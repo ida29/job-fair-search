@@ -6,6 +6,7 @@
     "astro": "astro",
     "build": "astro build",
     "dev": "astro dev",
+    "dev:sst": "AWS_PROFILE=job-fair-search-dev sst dev --stage dev",
     "preview": "astro preview",
     "sso": "aws sso login --profile job-fair-search-dev",
     "sso:dev": "aws sso login --profile job-fair-search-dev",
