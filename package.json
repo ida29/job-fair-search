@@ -5,8 +5,7 @@
   "scripts": {
     "astro": "astro",
     "build": "astro build",
-    "dev": "AWS_PROFILE=job-fair-search-dev sst dev --stage dev",
-    "dev:astro": "astro dev",
+    "dev": "AWS_PROFILE=job-fair-search-dev sst bind astro dev",
     "preview": "astro preview",
     "sso": "aws sso login --profile job-fair-search-dev",
     "sso:dev": "aws sso login --profile job-fair-search-dev",
