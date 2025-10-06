@@ -104,6 +104,9 @@ Resources:
               - s3:DeleteObject
               - s3:PutBucketPublicAccessBlock
               - s3:PutLifecycleConfiguration
+              - s3:PutObjectTagging
+              - s3:GetObjectTagging
+              - s3:DeleteObjectTagging
             Resource:
               - !Sub 'arn:aws:s3:::${GitHubRepo}-*'
               - !Sub 'arn:aws:s3:::${GitHubRepo}-*/*'
