@@ -107,6 +107,8 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::${GitHubRepo}-*'
               - !Sub 'arn:aws:s3:::${GitHubRepo}-*/*'
+              - 'arn:aws:s3:::sst-*'
+              - 'arn:aws:s3:::sst-*/*'
 
           # CloudFront permissions
           - Sid: CloudFrontAccess
