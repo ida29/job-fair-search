@@ -14,7 +14,7 @@ export default $config({
     // GitHub OIDC基盤ステージ
     // ========================================
     if ($app.stage === "github-oidc") {
-      const { deployGitHubOIDC } = await import("./sst/github-oidc.js");
+      const { deployGitHubOIDC } = await import("./infra/github-oidc.js");
       return await deployGitHubOIDC();
     }
 

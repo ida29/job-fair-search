@@ -5,9 +5,9 @@
  * `sst deploy --stage github-oidc` で各AWSアカウントに1回だけデプロイします。
  *
  * デプロイ方法:
- * - AWS_PROFILE=job-fair-search-dev sst deploy --stage github-oidc
- * - AWS_PROFILE=job-fair-search-stg sst deploy --stage github-oidc
- * - AWS_PROFILE=job-fair-search-prod sst deploy --stage github-oidc
+ * - npm run deploy:oidc:dev
+ * - npm run deploy:oidc:stg
+ * - npm run deploy:oidc:prod
  */
 
 /**
