@@ -85,11 +85,60 @@ gh run watch <run-id>
 gh run view <run-id> --log
 ```
 
+## ローカル開発
+
+### 通常の開発
+
+```bash
+npm run dev
+```
+
+Astro開発サーバーが http://localhost:4321 で起動します。
+静的ページやコンポーネントの開発に最適です。
+
+### SST Live Lambda開発モード
+
+```bash
+# AWS SSOログイン
+npm run sso
+
+# SST開発モード起動
+npm run dev:sst
+```
+
+SST開発モードの特徴:
+- **Live Lambda**: Lambdaコードの変更が即座に反映
+- **AWS統合**: 実際のAWS環境と接続して開発
+- **環境変数**: SSTリソースの値が自動注入
+- **ホットリロード**: Astroとの統合でフルスタック開発
+
+アクセスURL: http://localhost:4321
+
+### 開発モードの選択
+
+| 用途 | コマンド | メリット |
+|------|---------|---------|
+| 通常の開発 | `npm run dev` | 高速、AWS不要 |
+| API/Lambda開発 | `npm run dev:sst` | 実環境と同じ挙動 |
+
 ## 手動デプロイ
 
 ### ローカルからのデプロイ
 
 各環境に手動でデプロイする場合：
+
+```bash
+# Dev環境
+npm run deploy:dev
+
+# Stg環境
+npm run deploy:stg
+
+# Prod環境
+npm run deploy:prod
+```
+
+または直接実行：
 
 ```bash
 # Dev環境

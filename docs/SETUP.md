@@ -46,11 +46,26 @@ npm install
 
 ### 3. ローカル開発サーバーの起動
 
+**通常の開発（推奨）:**
 ```bash
 npm run dev
 ```
 
 ブラウザで http://localhost:4321 を開いて動作確認します。
+
+**Live Lambda付き開発:**
+```bash
+# AWS SSOログイン
+npm run sso
+
+# SST開発モード起動
+npm run dev:sst
+```
+
+SST開発モードでは:
+- Astro開発サーバーが自動起動（http://localhost:4321）
+- AWS Lambda関数がローカルで実行される（Live Lambda）
+- コード変更時に自動的にLambdaが更新される
 
 ## AWS環境のセットアップ
 
