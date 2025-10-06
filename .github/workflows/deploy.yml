@@ -29,11 +29,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Determine stage and AWS credentials
+        id: stage
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "stage=prod" >> $GITHUB_OUTPUT
+            echo "role_arn=${{ secrets.AWS_ROLE_ARN_PROD }}" >> $GITHUB_OUTPUT
+            echo "region=${{ secrets.AWS_REGION_PROD }}" >> $GITHUB_OUTPUT
+          else
+            echo "stage=dev" >> $GITHUB_OUTPUT
+            echo "role_arn=${{ secrets.AWS_ROLE_ARN_DEV }}" >> $GITHUB_OUTPUT
+            echo "region=${{ secrets.AWS_REGION_DEV }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ steps.stage.outputs.role_arn }}
+          aws-region: ${{ steps.stage.outputs.region }}
 
-      - name: Deploy to Production
-        run: npx sst deploy --stage prod
+      - name: Deploy with SST
+        run: npx sst deploy --stage ${{ steps.stage.outputs.stage }}
