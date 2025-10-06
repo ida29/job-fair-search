@@ -61,15 +61,12 @@
    aws sso login --profile job-fair-search-dev
    ```
 
-3. **ローカル開発サーバー起動**
+3. **SST開発モード起動**
    ```bash
    npm run dev
    ```
 
-4. **ローカルでのデプロイテスト**
-   ```bash
-   AWS_PROFILE=job-fair-search-dev npx sst deploy --stage dev
-   ```
+   SST開発モードでは、Astroの開発サーバーも自動起動され、ライブリロードが有効になります。
 
 詳細は [docs/SETUP.md](./docs/SETUP.md) を参照してください。
 
@@ -137,10 +134,13 @@ export async function GET() {
 
 | コマンド | 説明 |
 |---------|------|
-| `npm run dev` | ローカル開発サーバー起動 |
+| `npm run dev` | SST開発モード起動（Astro開発サーバー含む） |
+| `npm run dev:astro` | Astroのみの開発サーバー起動 |
 | `npm run build` | プロダクションビルド |
 | `npm run preview` | ビルド結果のプレビュー |
-| `npx sst deploy` | SSTデプロイ |
+| `npm run deploy:dev` | Dev環境へデプロイ |
+| `npm run deploy:stg` | Stg環境へデプロイ |
+| `npm run deploy:prod` | Prod環境へデプロイ |
 | `npx sst unlock` | デプロイロック解除 |
 | `npx sst remove` | リソース削除 |
 

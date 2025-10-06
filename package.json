@@ -5,8 +5,12 @@
   "scripts": {
     "astro": "astro",
     "build": "astro build",
-    "dev": "astro dev",
-    "preview": "astro preview"
+    "dev": "sst dev --stage dev",
+    "dev:astro": "astro dev",
+    "preview": "astro preview",
+    "deploy:dev": "sst deploy --stage dev",
+    "deploy:stg": "sst deploy --stage stg",
+    "deploy:prod": "sst deploy --stage prod"
   },
   "dependencies": {
     "astro": "^5.14.1",
