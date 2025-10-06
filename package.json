@@ -12,6 +12,9 @@
     "sso:dev": "aws sso login --profile job-fair-search-dev",
     "sso:stg": "aws sso login --profile job-fair-search-stg",
     "sso:prod": "aws sso login --profile job-fair-search-prod",
+    "deploy:oidc:dev": "AWS_PROFILE=job-fair-search-dev sst deploy --stage github-oidc",
+    "deploy:oidc:stg": "AWS_PROFILE=job-fair-search-stg sst deploy --stage github-oidc",
+    "deploy:oidc:prod": "AWS_PROFILE=job-fair-search-prod sst deploy --stage github-oidc",
     "deploy:dev": "AWS_PROFILE=job-fair-search-dev sst deploy --stage dev",
     "deploy:stg": "AWS_PROFILE=job-fair-search-stg sst deploy --stage stg",
     "deploy:prod": "AWS_PROFILE=job-fair-search-prod sst deploy --stage prod"
