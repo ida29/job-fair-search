@@ -49,4 +49,4 @@ jobs:
           aws-region: ${{ steps.stage.outputs.region }}
 
       - name: Deploy with SST
-        run: npx sst deploy --stage ${{ steps.stage.outputs.stage }}
+        run: npx sst deploy --stage ${{ steps.stage.outputs.stage }} --print-logs
